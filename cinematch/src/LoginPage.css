@@ -1,0 +1,150 @@
+.login-page {
+  min-height: 100vh;
+  background: #0f0f0f;
+  color: white;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.login-hero {
+  width: min(980px, 100%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 48px;
+  align-items: center;
+}
+
+.login-copy {
+  text-align: left;
+}
+
+.eyebrow {
+  color: #f5c518;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+.login-copy h1 {
+  color: white;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: 0;
+  margin: 0 0 20px;
+}
+
+.login-copy p:not(.eyebrow) {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 520px;
+  font-size: 18px;
+}
+
+.login-panel {
+  background: rgba(20, 20, 20, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+  box-sizing: border-box;
+  padding: 28px;
+  text-align: left;
+}
+
+.login-panel__header {
+  margin-bottom: 24px;
+}
+
+.login-panel h2 {
+  color: white;
+  font-size: 28px;
+  letter-spacing: 0;
+  margin: 0 0 6px;
+}
+
+.login-panel p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.field span,
+.remember-row {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  color: white;
+  font: inherit;
+  outline: none;
+  padding: 13px 14px;
+}
+
+.field input:focus {
+  border-color: #f5c518;
+  box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.16);
+}
+
+.remember-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin: 6px 0 18px;
+}
+
+.remember-row input {
+  accent-color: #e50914;
+}
+
+.form-error {
+  background: rgba(229, 9, 20, 0.12);
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  border-radius: 8px;
+  color: #ffb4b9;
+  font-size: 14px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+}
+
+.primary-action {
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 13px 16px;
+}
+
+.primary-action {
+  background: #e50914;
+  border: 1px solid #e50914;
+  color: white;
+}
+
+@media (max-width: 860px) {
+  .login-page {
+    padding: 24px;
+  }
+
+  .login-hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .login-copy h1 {
+    font-size: 42px;
+  }
+}
