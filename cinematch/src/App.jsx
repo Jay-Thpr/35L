@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import SearchPage from './SearchPage';
 
@@ -33,7 +34,7 @@ function buildUserData(email) {
   };
 }
 
-function App() {
+function MainApp() {
   const [currentUser, setCurrentUser] = useState(getSavedUser);
 
   function handleLogin(email, rememberUser = true) {
@@ -53,6 +54,24 @@ function App() {
   }
 
   return <SearchPage />;
+}
+
+function ProfilePagePlaceholder() {
+  return (
+    <main style={{ padding: '48px 32px', color: 'white' }}>
+      <h1>Profile page</h1>
+      <p>Routing is wired. Build the real profile screen here next.</p>
+    </main>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainApp />} />
+      <Route path="/profile" element={<ProfilePagePlaceholder />} />
+    </Routes>
+  );
 }
 
 export default App;
