@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import SearchPage from './SearchPage';
+import ProfilePage from './ProfilePage';
 
 const AUTH_STORAGE_KEY = 'cinematch.currentUser';
 
@@ -69,7 +70,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<MainApp />} />
-      <Route path="/profile" element={<ProfilePagePlaceholder />} />
+      <Route path="/profile" element={<ProfilePage />} />
     </Routes>
   );
 }
