@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './ProfilePage.css';
-import { getMyProfile, saveMyProfile } from './profileApi';
+import { getMyProfile, updateMyProfile } from './profileApi';
 
 function ProfileField({ label, value, placeholder }) {
   return (
@@ -91,7 +91,7 @@ function ProfilePage() {
   function updateDraftGenres(value) {
     const favoriteGenres = value
       .split(',')
-      .map((genre) => genre.trim)
+      .map((genre) => genre.trim())
       .filter(Boolean);
 
     updateDraft('favoriteGenres', favoriteGenres);
@@ -104,13 +104,13 @@ function ProfilePage() {
   }
 
   function cancelEditing() {
-    setDraftProfile(profile.user);
+    setDraftProfile(draftProfile);
     setIsEditing(false);
     setStatusMessage('');
   }
 
   async function saveProfile() {
-    const updatedProfile = await saveMyProfile(draftProfile);
+    const updatedProfile = await updateMyProfile(draftProfile);
 
     setProfile(updatedProfile);
     setDraftProfile(updatedProfile.user);
