@@ -96,73 +96,8 @@ function SearchPage() {
       color: 'white',
       fontFamily: 'Inter, sans-serif',
     }}>
-
-      {/* ── Navbar ── */}
-      <header style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 32px',
-        height: '80px',
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#e50914', letterSpacing: '-1px' }}>
-            CINEMATIC
-          </div>
-          <nav style={{ display: 'flex', gap: '24px' }}>
-            <a href="/" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontWeight: '500' }}>Home</a>
-            <a href="/search" style={{
-              color: 'white', textDecoration: 'none', fontWeight: '500',
-              borderBottom: '2px solid #e50914', paddingBottom: '4px',
-            }}>Discovery</a>
-            <a href="/feed" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontWeight: '500' }}>Feed</a>
-          </nav>
-        </div>
-
-        {/* Search bar in navbar */}
-        <form onSubmit={handleSubmit} style={{
-          display: 'flex', alignItems: 'center', gap: '8px',
-          backgroundColor: 'rgba(26,26,26,0.4)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '9999px',
-          padding: '8px 16px',
-          width: '280px',
-        }}>
-          <span style={{ color: 'rgba(255,255,255,0.5)' }}>🔍</span>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search movies..."
-            style={{
-              background: 'none', border: 'none', outline: 'none',
-              color: 'white', flex: 1, fontSize: '15px',
-            }}
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              style={{
-                background: 'none', border: 'none',
-                color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '16px',
-              }}
-            >
-              ✕
-            </button>
-          )}
-        </form>
-      </header>
-
       {/* ── Main content ── */}
-      <main style={{ padding: '48px 32px', maxWidth: '1400px', margin: '0 auto' }}>
+      <main style={{ padding: '112px 48px 48px', maxWidth: '1400px', margin: '0 auto' }}>
 
         {/* Landing state: big search form before the user has searched */}
         {!hasSearched && (

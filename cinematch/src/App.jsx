@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
+import HomePage from './HomePage';
 import SearchPage from './SearchPage';
+import Navbar from './Navbar';
 
 const AUTH_STORAGE_KEY = 'cinematch.currentUser';
 
@@ -48,11 +51,25 @@ function App() {
     setCurrentUser(user);
   }
 
+  function handleLogout() {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setCurrentUser(null);
+  }
+
   if (!currentUser) {
     return <LoginPage onLogin={handleLogin} />;
   }
 
-  return <SearchPage />;
+  return (
+    <BrowserRouter>
+      <Navbar user={currentUser} onLogout={handleLogout} />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

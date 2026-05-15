@@ -1,0 +1,8 @@
+.home-page {
+  background-color: #0F0F0F;
+  min-height: 100vh;
+}
+
+.home-page__rows {
+  padding-top: 32px;
+}

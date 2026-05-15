@@ -1,0 +1,85 @@
+.movie-row {
+  margin-bottom: 40px;
+}
+
+.movie-row__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 16px;
+  padding-left: 48px;
+}
+
+.movie-row__slider {
+  position: relative;
+}
+
+.movie-row__cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0 48px;
+}
+
+.movie-row__cards::-webkit-scrollbar {
+  display: none;
+}
+
+.movie-row__card-wrapper {
+  flex: 0 0 180px;
+  scroll-snap-align: start;
+}
+
+.movie-row__arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: #fff;
+  font-size: 36px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.movie-row__slider:hover .movie-row__arrow {
+  opacity: 1;
+}
+
+.movie-row__arrow--left {
+  left: 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.movie-row__arrow--right {
+  right: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+@media (max-width: 768px) {
+  .movie-row__title {
+    padding-left: 16px;
+    font-size: 18px;
+  }
+
+  .movie-row__cards {
+    padding: 0 16px;
+    gap: 10px;
+  }
+
+  .movie-row__card-wrapper {
+    flex: 0 0 140px;
+  }
+
+  .movie-row__arrow {
+    display: none;
+  }
+}
