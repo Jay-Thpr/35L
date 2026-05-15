@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
+import HomePage from './HomePage';
 import SearchPage from './SearchPage';
-import ProfilePage from './ProfilePage';
+import Navbar from './Navbar';
 
 const AUTH_STORAGE_KEY = 'cinematch.currentUser';
 
@@ -50,11 +51,43 @@ function MainApp() {
     setCurrentUser(user);
   }
 
+  function handleLogout() {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setCurrentUser(null);
+  }
+
   if (!currentUser) {
     return <LoginPage onLogin={handleLogin} />;
   }
 
-  return <SearchPage />;
+  return (
+    <BrowserRouter>
+      <Navbar user={currentUser} onLogout={handleLogout} />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function ProfilePagePlaceholder() {
+  return (
+    <main style={{ padding: '48px 32px', color: 'white' }}>
+      <h1>Profile page</h1>
+      <p>Routing is wired. Build the real profile screen here next.</p>
+    </main>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainApp />} />
+      <Route path="/profile" element={<ProfilePage />} />
+    </Routes>
+  );
 }
 
 function ProfilePagePlaceholder() {
