@@ -17,14 +17,15 @@ function HeroBanner({ movie }) {
       )}
       <div className="hero-banner__gradient" />
       <div className="hero-banner__content">
+        <span className="hero-banner__label">Featured Film</span>
         <h1 className="hero-banner__title">{movie.title}</h1>
         <p className="hero-banner__overview">{movie.overview}</p>
         <div className="hero-banner__actions">
           <button className="hero-banner__btn hero-banner__btn--primary">
-            <span>&#9654;</span> Play
+            &#9654; Play
           </button>
           <button className="hero-banner__btn hero-banner__btn--secondary">
-            <span>&#9432;</span> More Info
+            More Info
           </button>
         </div>
       </div>
