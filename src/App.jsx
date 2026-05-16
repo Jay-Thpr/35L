@@ -1,60 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import HomePage from './HomePage';
 import SearchPage from './SearchPage';
 import Navbar from './Navbar';
-
-const AUTH_STORAGE_KEY = 'cinematch.currentUser';
-
-function getSavedUser() {
-  const savedUser = localStorage.getItem(AUTH_STORAGE_KEY);
-
-  if (!savedUser) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(savedUser);
-  } catch {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    return null;
-  }
-}
-
-function buildUserData(email) {
-  const displayName = email
-    .split('@')[0]
-    .split(/[._-]/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
-
-  return {
-    email,
-    name: displayName || 'Movie Fan',
-  };
-}
+import { supabase } from "./supabaseClient";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(getSavedUser);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  function handleLogin(email, rememberUser = true) {
-    const user = buildUserData(email);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-    if (rememberUser) {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-    }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(session?.user ?? null);
+    });
 
-    setCurrentUser(user);
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleLogin(email, password) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
   }
 
-  function handleLogout() {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    setCurrentUser(null);
+  async function handleLogout() {
+    await supabase.auth.signOut();
   }
+
+  if (loading) return null;
 
   if (!currentUser) {
     return <LoginPage onLogin={handleLogin} />;
