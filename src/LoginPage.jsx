@@ -4,10 +4,9 @@ import './LoginPage.css';
 function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError('');
 
@@ -18,7 +17,16 @@ function LoginPage({ onLogin }) {
       return;
     }
 
-    onLogin(trimmedEmail, rememberMe);
+    if (!password) {
+      setError('Enter your password.');
+      return;
+    }
+
+    try {
+      await onLogin(trimmedEmail, password);
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+    }
   }
 
   return (
@@ -58,15 +66,6 @@ function LoginPage({ onLogin }) {
               placeholder="Password"
               autoComplete="current-password"
             />
-          </label>
-
-          <label className="remember-row">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(event) => setRememberMe(event.target.checked)}
-            />
-            <span>Keep me signed in</span>
           </label>
 
           {error && <p className="form-error">{error}</p>}
