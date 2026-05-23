@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
+import SignupPage from './SignupPage';
 import HomePage from './HomePage';
 import SearchPage from './SearchPage';
 import ProfilePage from './ProfilePage';
@@ -41,32 +42,50 @@ function App() {
 
   async function handleLogin(email, password) {
     if (!isSupabaseConfigured) {
-      throw new Error('Supabase is not configured.');
+      setCurrentUser({
+        ...demoUser,
+        email,
+      });
+      return;
     }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }
 
+  async function handleSignup(email, password) {
+    if (!isSupabaseConfigured) {
+      setCurrentUser({
+        ...demoUser,
+        email,
+      });
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+  }
+
   async function handleLogout() {
-    if (!isSupabaseConfigured) return;
+    if (!isSupabaseConfigured) {
+      setCurrentUser(null);
+      return;
+    }
 
     await supabase.auth.signOut();
   }
 
   if (loading) return null;
 
-  if (!currentUser) {
-    return <LoginPage onLogin={handleLogin} />;
-  }
-
   return (
     <>
-      <Navbar user={currentUser} onLogout={handleLogout} />
+      {currentUser && <Navbar user={currentUser} onLogout={handleLogout} />}
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
+        <Route path="/" element={currentUser ? <HomePage /> : <Navigate to="/login" replace />} />
+        <Route path="/search" element={currentUser ? <SearchPage /> : <Navigate to="/login" replace />} />
+        <Route path="/profile" element={currentUser ? <ProfilePage /> : <Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
