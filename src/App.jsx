@@ -1,18 +1,35 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
+import SignupPage from './SignupPage';
 import HomePage from './HomePage';
 import SearchPage from './SearchPage';
+import ProfilePage from './ProfilePage';
 import Navbar from './Navbar';
-import { supabase } from "./supabaseClient";
+import { isSupabaseConfigured, supabase } from './supabaseClient';
+
+const demoUser = {
+  email: 'demo@cinematch.local',
+  user_metadata: {
+    full_name: 'Demo User',
+  },
+};
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(isSupabaseConfigured ? null : demoUser);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return undefined;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentUser(session?.user ?? null);
+      setLoading(false);
+    }).catch(() => {
+      setCurrentUser(null);
       setLoading(false);
     });
 
@@ -24,29 +41,54 @@ function App() {
   }, []);
 
   async function handleLogin(email, password) {
+    if (!isSupabaseConfigured) {
+      setCurrentUser({
+        ...demoUser,
+        email,
+      });
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }
 
+  async function handleSignup(email, password) {
+    if (!isSupabaseConfigured) {
+      setCurrentUser({
+        ...demoUser,
+        email,
+      });
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+  }
+
   async function handleLogout() {
+    if (!isSupabaseConfigured) {
+      setCurrentUser(null);
+      return;
+    }
+
     await supabase.auth.signOut();
   }
 
   if (loading) return null;
 
-  if (!currentUser) {
-    return <LoginPage onLogin={handleLogin} />;
-  }
-
   return (
-    <BrowserRouter>
-      <Navbar user={currentUser} onLogout={handleLogout} />
+    <>
+      {currentUser && <Navbar user={currentUser} onLogout={handleLogout} />}
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
+        <Route path="/" element={currentUser ? <HomePage /> : <Navigate to="/login" replace />} />
+        <Route path="/search" element={currentUser ? <SearchPage /> : <Navigate to="/login" replace />} />
+        <Route path="/profile" element={currentUser ? <ProfilePage /> : <Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

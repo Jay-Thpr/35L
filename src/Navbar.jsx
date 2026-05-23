@@ -15,12 +15,15 @@ function Navbar({ user, onLogout }) {
           <NavLink to="/search" className="navbar__link">
             Search
           </NavLink>
+          <NavLink to="/profile" className="navbar__link">
+            Profile
+          </NavLink>
         </nav>
       </div>
       <div className="navbar__right">
         {user && (
           <>
-            <span className="navbar__user">{user.name}</span>
+            <span className="navbar__user">{user.user_metadata?.name || user.email}</span>
             <button className="navbar__logout" onClick={onLogout}>
               Sign Out
             </button>
