@@ -5,15 +5,30 @@ import HomePage from './HomePage';
 import SearchPage from './SearchPage';
 import ProfilePage from './ProfilePage';
 import Navbar from './Navbar';
-import { supabase } from './supabaseClient';
+import { isSupabaseConfigured, supabase } from './supabaseClient';
+
+const demoUser = {
+  email: 'demo@cinematch.local',
+  user_metadata: {
+    full_name: 'Demo User',
+  },
+};
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(isSupabaseConfigured ? null : demoUser);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return undefined;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentUser(session?.user ?? null);
+      setLoading(false);
+    }).catch(() => {
+      setCurrentUser(null);
       setLoading(false);
     });
 
@@ -25,11 +40,17 @@ function App() {
   }, []);
 
   async function handleLogin(email, password) {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase is not configured.');
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }
 
   async function handleLogout() {
+    if (!isSupabaseConfigured) return;
+
     await supabase.auth.signOut();
   }
 
