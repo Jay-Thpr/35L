@@ -1,0 +1,11 @@
+.home-page {
+  background: var(--color-bg);
+  min-height: 100vh;
+}
+
+.home-page__rows {
+  position: relative;
+  padding-top: 24px;
+  margin-top: -60px;
+  z-index: 2;
+}
