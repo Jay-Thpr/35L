@@ -55,10 +55,12 @@ def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get
         return [dict(r) for r in rows]
     rows = db.execute(
         text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
-             "e.embedding <=> CAST(:vec AS vector) AS distance "
+             "e.embedding <=> CAST(:vec AS vector) AS distance, "
+             "e.embedding <=> CAST(:vec AS vector) "
+             "  + 0.01 * (EXTRACT(YEAR FROM CURRENT_DATE) - m.release_year) AS score "
              "FROM movie_embeddings e JOIN movies m ON m.id = e.movie_id "
              "WHERE m.id NOT IN (SELECT movie_id FROM ratings WHERE user_id = :uid) "
-             "ORDER BY distance ASC LIMIT :limit"),
+             "ORDER BY score ASC LIMIT :limit"),
         {"vec": user_vec, "uid": user_id, "limit": limit},
     ).mappings().all()
     return [dict(r) for r in rows]
