@@ -1,9 +1,21 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.db import SessionLocal
 
+from app.recommend import compute_user_embedding
+
 app = FastAPI(title="Cinematch API", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_db():
@@ -14,9 +26,16 @@ def get_db():
         db.close()
 
 
+class RatingIn(BaseModel):
+    user_id: int
+    movie_id: int
+    rating: int
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
 
 @app.get("/recommendations")
 def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get_db)):
@@ -35,3 +54,16 @@ def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get
         {"vec": user_vec, "uid": user_id, "limit": limit},
     ).mappings().all()
     return [dict(r) for r in rows]
+
+
+@app.post("/ratings")
+def add_rating(rating: RatingIn, db: Session = Depends(get_db)):
+    db.execute(
+        text("INSERT INTO ratings (user_id, movie_id, rating) "
+             "VALUES (:uid, :mid, :rating) "
+             "ON CONFLICT (user_id, movie_id) DO UPDATE SET rating = EXCLUDED.rating"),
+        {"uid": rating.user_id, "mid": rating.movie_id, "rating": rating.rating},
+    )
+    db.commit()
+    compute_user_embedding(db, rating.user_id)
+    return {"status": "ok"}
