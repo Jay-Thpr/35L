@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.db import SessionLocal
-
 from app.recommend import compute_user_embedding
 
 app = FastAPI(title="Cinematch API", version="0.1.0")
@@ -44,7 +43,16 @@ def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get
         {"uid": user_id},
     ).scalar()
     if user_vec is None:
-        return []
+        rows = db.execute(
+            text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
+                 "COUNT(r.id) AS rating_count "
+                 "FROM movies m LEFT JOIN ratings r ON r.movie_id = m.id "
+                 "WHERE m.id NOT IN (SELECT movie_id FROM ratings WHERE user_id = :uid) "
+                 "GROUP BY m.id "
+                 "ORDER BY rating_count DESC LIMIT :limit"),
+            {"uid": user_id, "limit": limit},
+        ).mappings().all()
+        return [dict(r) for r in rows]
     rows = db.execute(
         text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
              "e.embedding <=> CAST(:vec AS vector) AS distance "
