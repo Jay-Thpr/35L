@@ -77,3 +77,22 @@ def add_rating(rating: RatingIn, db: Session = Depends(get_db)):
     db.commit()
     compute_user_embedding(db, rating.user_id)
     return {"status": "ok"}
+
+
+@app.get("/movies/{movie_id}/similar")
+def get_similar(movie_id: int, limit: int = 10, db: Session = Depends(get_db)):
+    target = db.execute(
+        text("SELECT embedding FROM movie_embeddings WHERE movie_id = :mid"),
+        {"mid": movie_id},
+    ).scalar()
+    if target is None:
+        return []
+    rows = db.execute(
+        text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
+             "e.embedding <=> CAST(:vec AS vector) AS distance "
+             "FROM movie_embeddings e JOIN movies m ON m.id = e.movie_id "
+             "WHERE m.id != :mid "
+             "ORDER BY distance ASC LIMIT :limit"),
+        {"vec": target, "mid": movie_id, "limit": limit},
+    ).mappings().all()
+    return [dict(r) for r in rows]
