@@ -1,7 +1,12 @@
 CREATE EXTENSION IF NOT EXISTS vector;
 
+DROP TABLE IF EXISTS user_embeddings CASCADE;
+DROP TABLE IF EXISTS movie_embeddings CASCADE;
+DROP TABLE IF EXISTS ratings CASCADE;
+DROP TABLE IF EXISTS movies CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     email TEXT UNIQUE,
@@ -9,19 +14,16 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS movies (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE movies (
+    id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
-    plot TEXT,
+    overview TEXT,
     genres TEXT,
-    director TEXT,
-    cast_list TEXT,
     release_year INTEGER,
-    runtime_min INTEGER,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS ratings (
+CREATE TABLE ratings (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     movie_id INTEGER NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
@@ -30,13 +32,12 @@ CREATE TABLE IF NOT EXISTS ratings (
     UNIQUE (user_id, movie_id)
 );
 
-CREATE TABLE IF NOT EXISTS user_embeddings (
+CREATE TABLE user_embeddings (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     embedding vector(1536) NOT NULL
 );
 
-
-CREATE TABLE IF NOT EXISTS movie_embeddings (
+CREATE TABLE movie_embeddings (
     movie_id INTEGER PRIMARY KEY REFERENCES movies(id) ON DELETE CASCADE,
     embedding vector(1536) NOT NULL
 );

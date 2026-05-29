@@ -13,12 +13,8 @@ def build_text(row):
     parts = [row.title]
     if row.genres:
         parts.append(row.genres)
-    if row.director:
-        parts.append(f"directed by {row.director}")
-    if row.cast_list:
-        parts.append(f"starring {row.cast_list}")
-    if row.plot:
-        parts.append(row.plot)
+    if row.overview:
+        parts.append(row.overview)
     return ". ".join(parts)
 
 
@@ -32,7 +28,7 @@ def main():
     session = SessionLocal()
 
     rows = session.execute(text(
-        "SELECT m.id, m.title, m.plot, m.genres, m.director, m.cast_list "
+        "SELECT m.id, m.title, m.overview, m.genres "
         "FROM movies m LEFT JOIN movie_embeddings e ON e.movie_id = m.id "
         "WHERE e.movie_id IS NULL ORDER BY m.id"
     )).all()
@@ -62,6 +58,7 @@ def main():
 
     session.close()
     print(f"done. embedded {done} movies.")
+
 
 
 main()

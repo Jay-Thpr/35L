@@ -44,7 +44,7 @@ def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get
     ).scalar()
     if user_vec is None:
         rows = db.execute(
-            text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
+            text("SELECT m.id, m.title, m.overview, m.genres, m.release_year, "
                  "COUNT(r.id) AS rating_count "
                  "FROM movies m LEFT JOIN ratings r ON r.movie_id = m.id "
                  "WHERE m.id NOT IN (SELECT movie_id FROM ratings WHERE user_id = :uid) "
@@ -54,7 +54,7 @@ def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get
         ).mappings().all()
         return [dict(r) for r in rows]
     rows = db.execute(
-        text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
+        text("SELECT m.id, m.title, m.overview, m.genres, m.release_year, "
              "e.embedding <=> CAST(:vec AS vector) AS distance, "
              "e.embedding <=> CAST(:vec AS vector) "
              "  + 0.01 * (EXTRACT(YEAR FROM CURRENT_DATE) - m.release_year) AS score "
@@ -88,7 +88,7 @@ def get_similar(movie_id: int, limit: int = 10, db: Session = Depends(get_db)):
     if target is None:
         return []
     rows = db.execute(
-        text("SELECT m.id, m.title, m.plot, m.genres, m.release_year, "
+        text("SELECT m.id, m.title, m.overview, m.genres, m.release_year, "
              "e.embedding <=> CAST(:vec AS vector) AS distance "
              "FROM movie_embeddings e JOIN movies m ON m.id = e.movie_id "
              "WHERE m.id != :mid "
