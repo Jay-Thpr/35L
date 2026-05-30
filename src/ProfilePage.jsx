@@ -54,7 +54,7 @@ function MovieList({ title, description, movies, emptyText }) {
   );
 }
 
-function ProfilePage() {
+function ProfilePage({ userEmail }) {
   const [profile, setProfile] = useState(null);
   const [draftProfile, setDraftProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -62,13 +62,13 @@ function ProfilePage() {
 
   useEffect(() => {
     async function loadProfile() {
-      const loadedProfile = await getMyProfile();
+      const loadedProfile = await getMyProfile(userEmail);
       setProfile(loadedProfile);
       setDraftProfile(loadedProfile.user);
     }
 
     loadProfile();
-  }, []);
+  }, [userEmail]);
 
   if (!profile || !draftProfile) {
     return (
@@ -110,7 +110,7 @@ function ProfilePage() {
   }
 
   async function saveProfile() {
-    const updatedProfile = await updateMyProfile(draftProfile);
+    const updatedProfile = await updateMyProfile(userEmail, draftProfile);
 
     setProfile(updatedProfile);
     setDraftProfile(updatedProfile.user);

@@ -1,12 +1,9 @@
 import { useState } from 'react';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 import './ReviewModal.css';
 
-const REVIEWS_STORAGE_KEY = 'cinematch.movieReviews';
-
-function ReviewModal({ movie, onClose, onReviewChange }) {
-  const existingReview = getSavedReview(movie.id);
-  const [rating, setRating] = useState(existingReview?.rating || 0);
-  const [reviewText, setReviewText] = useState(existingReview?.reviewText || '');
+function ReviewModal({ movie, onClose, onReviewChange, userId, existingRating }) {
+  const [rating, setRating] = useState(existingRating || 0);
   const [error, setError] = useState('');
 
   const posterUrl = movie.poster_path
@@ -14,7 +11,7 @@ function ReviewModal({ movie, onClose, onReviewChange }) {
     : null;
   const year = movie.release_date ? movie.release_date.slice(0, 4) : 'N/A';
 
-  function handleSave(event) {
+  async function handleSave(event) {
     event.preventDefault();
     setError('');
 
@@ -23,30 +20,31 @@ function ReviewModal({ movie, onClose, onReviewChange }) {
       return;
     }
 
-    const reviews = getSavedReviews();
-    const savedReview = {
-      movieId: movie.id,
-      title: movie.title,
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date,
-      rating,
-      reviewText: reviewText.trim(),
-      updatedAt: new Date().toISOString(),
-    };
+    if (isSupabaseConfigured && userId) {
+      const { error: dbError } = await supabase
+        .from('ratings')
+        .upsert(
+          { user_id: userId, movie_id: movie.id, rating },
+          { onConflict: 'user_id,movie_id' }
+        );
+      if (dbError) {
+        setError(dbError.message);
+        return;
+      }
+    }
 
-    localStorage.setItem(
-      REVIEWS_STORAGE_KEY,
-      JSON.stringify({ ...reviews, [movie.id]: savedReview })
-    );
-
-    onReviewChange(savedReview);
+    onReviewChange({ rating });
     onClose();
   }
 
-  function handleDelete() {
-    const reviews = getSavedReviews();
-    delete reviews[movie.id];
-    localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
+  async function handleDelete() {
+    if (isSupabaseConfigured && userId) {
+      await supabase
+        .from('ratings')
+        .delete()
+        .eq('user_id', userId)
+        .eq('movie_id', movie.id);
+    }
     onReviewChange(null);
     onClose();
   }
@@ -92,22 +90,12 @@ function ReviewModal({ movie, onClose, onReviewChange }) {
               </div>
             </label>
 
-            <label className="review-modal__field">
-              <span>Your review</span>
-              <textarea
-                value={reviewText}
-                onChange={(event) => setReviewText(event.target.value)}
-                placeholder="Write what you thought about this movie..."
-                rows="6"
-              />
-            </label>
-
             {error && <p className="review-modal__error">{error}</p>}
           </div>
         </div>
 
         <div className="review-modal__actions">
-          {existingReview && (
+          {existingRating && (
             <button className="review-modal__delete" type="button" onClick={handleDelete}>
               Delete review
             </button>
@@ -122,25 +110,6 @@ function ReviewModal({ movie, onClose, onReviewChange }) {
       </form>
     </div>
   );
-}
-
-function getSavedReview(movieId) {
-  return getSavedReviews()[movieId] || null;
-}
-
-function getSavedReviews() {
-  const savedReviews = localStorage.getItem(REVIEWS_STORAGE_KEY);
-
-  if (!savedReviews) {
-    return {};
-  }
-
-  try {
-    return JSON.parse(savedReviews);
-  } catch {
-    localStorage.removeItem(REVIEWS_STORAGE_KEY);
-    return {};
-  }
 }
 
 export default ReviewModal;

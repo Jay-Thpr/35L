@@ -38,7 +38,7 @@ function getFallbackMovies(searchTerm) {
   );
 }
 
-function SearchPage() {
+function SearchPage({ userId }) {
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -126,7 +126,7 @@ function SearchPage() {
         {!loading && movies.length > 0 && (
           <div className="search-page__grid">
             {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+              <MovieCard key={movie.id} movie={movie} userId={userId} />
             ))}
           </div>
         )}

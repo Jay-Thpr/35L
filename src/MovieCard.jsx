@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReviewModal from './ReviewModal';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 import './MovieCard.css';
 
 const GENRE_MAP = {
@@ -10,9 +11,20 @@ const GENRE_MAP = {
   10752: 'War', 37: 'Western'
 };
 
-function MovieCard({ movie }) {
+function MovieCard({ movie, userId }) {
   const [reviewOpen, setReviewOpen] = useState(false);
-  const [movieReview, setMovieReview] = useState(() => getSavedReview(movie.id));
+  const [movieReview, setMovieReview] = useState(null);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !userId) return;
+    supabase
+      .from('ratings')
+      .select('rating')
+      .eq('user_id', userId)
+      .eq('movie_id', movie.id)
+      .maybeSingle()
+      .then(({ data }) => setMovieReview(data));
+  }, [userId, movie.id]);
 
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -66,28 +78,14 @@ function MovieCard({ movie }) {
       {reviewOpen && (
         <ReviewModal
           movie={movie}
+          userId={userId}
+          existingRating={movieReview?.rating}
           onClose={() => setReviewOpen(false)}
           onReviewChange={setMovieReview}
         />
       )}
     </>
   );
-}
-
-function getSavedReview(movieId) {
-  const savedReviews = localStorage.getItem('cinematch.movieReviews');
-
-  if (!savedReviews) {
-    return null;
-  }
-
-  try {
-    const reviews = JSON.parse(savedReviews);
-    return reviews[movieId] || null;
-  } catch {
-    localStorage.removeItem('cinematch.movieReviews');
-    return null;
-  }
 }
 
 export default MovieCard;

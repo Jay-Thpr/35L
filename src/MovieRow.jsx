@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import MovieCard from './MovieCard';
 import './MovieRow.css';
 
-function MovieRow({ title, movies }) {
+function MovieRow({ title, movies, userId }) {
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -41,7 +41,7 @@ function MovieRow({ title, movies }) {
         >
           {movies.map((movie) => (
             <div className="movie-row__card-wrapper" key={movie.id}>
-              <MovieCard movie={movie} />
+              <MovieCard movie={movie} userId={userId} />
             </div>
           ))}
         </div>
