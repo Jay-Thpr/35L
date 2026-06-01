@@ -4,8 +4,7 @@ import MovieRow from './MovieRow';
 import { FEATURED_MOVIE, MOVIE_ROWS } from './dummyData';
 import './HomePage.css';
 
-function HomePage() {
-  // Later: replace dummy data with useEffect + fetch("/api/...")
+function HomePage({ userId }) {
   const [featured] = useState(FEATURED_MOVIE);
   const [rows] = useState(MOVIE_ROWS);
 
@@ -14,7 +13,7 @@ function HomePage() {
       <HeroBanner movie={featured} />
       <div className="home-page__rows">
         {rows.map((row) => (
-          <MovieRow key={row.title} title={row.title} movies={row.movies} />
+          <MovieRow key={row.title} title={row.title} movies={row.movies} userId={userId} />
         ))}
       </div>
     </div>

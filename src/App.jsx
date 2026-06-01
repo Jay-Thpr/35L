@@ -64,6 +64,8 @@ function App() {
 
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
+
+    await supabase.from('users').insert({ email });
   }
 
   async function handleLogout() {
@@ -83,9 +85,9 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
-        <Route path="/" element={currentUser ? <HomePage /> : <Navigate to="/login" replace />} />
-        <Route path="/search" element={currentUser ? <SearchPage /> : <Navigate to="/login" replace />} />
-        <Route path="/profile" element={currentUser ? <ProfilePage /> : <Navigate to="/login" replace />} />
+        <Route path="/" element={currentUser ? <HomePage userId={currentUser.id} /> : <Navigate to="/login" replace />} />
+        <Route path="/search" element={currentUser ? <SearchPage userId={currentUser.id} /> : <Navigate to="/login" replace />} />
+        <Route path="/profile" element={currentUser ? <ProfilePage userEmail={currentUser.email} /> : <Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

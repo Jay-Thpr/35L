@@ -1,92 +1,94 @@
-const PROFILE_STORAGE_KEY = 'cinematch.profile';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 const defaultProfile = {
   user: {
-    displayName: 'Jay T',
+    displayName: '',
     username: '',
-    email: 'jay@example.com',
-    avatarInitials: 'JT',
+    email: '',
+    avatarInitials: 'CM',
     bio: '',
-    favoriteMovie: 'Arrival',
-    favoriteGenres: ['Sci-Fi', 'Horror', 'Thriller'],
+    favoriteMovie: '',
+    favoriteGenres: [],
   },
   stats: [
-    { label: 'Watched', value: 128 },
-    { label: 'Favorites', value: 24 },
-    { label: 'Ratings', value: 91 },
-    { label: 'Watchlist', value: 17 },
+    { label: 'Watched', value: 0 },
+    { label: 'Favorites', value: 0 },
+    { label: 'Ratings', value: 0 },
+    { label: 'Watchlist', value: 0 },
   ],
-  recentlyWatched: [
-    { title: 'Dune: Part Two', detail: 'Watched last night', rating: '4.5' },
-    { title: 'The Holdovers', detail: 'Watched this week', rating: '4.0' },
-    { title: 'Past Lives', detail: 'Watched this month', rating: '5.0' },
-  ],
-  favorites: [
-    { title: 'Arrival', detail: 'Favorite movie', rating: '5.0' },
-    { title: 'Alien', detail: 'Comfort rewatch', rating: '4.5' },
-    { title: 'The Matrix', detail: 'All-time pick', rating: '5.0' },
-  ],
-  watchlist: [
-    { title: 'Anatomy of a Fall', detail: 'Queued next', rating: null },
-    { title: 'Perfect Days', detail: 'Recommended', rating: null },
-    { title: 'The Zone of Interest', detail: 'Saved for later', rating: null },
-  ],
+  recentlyWatched: [],
+  favorites: [],
+  watchlist: [],
 };
 
 function getInitials(displayName, email) {
-  const nameParts = displayName.trim().split(/\s+/).filter(Boolean);
-
+  const nameParts = (displayName || '').trim().split(/\s+/).filter(Boolean);
   if (nameParts.length > 0) {
-    return nameParts
-      .slice(0, 2)
-      .map((part) => part.charAt(0).toUpperCase())
-      .join('');
+    return nameParts.slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join('');
   }
-
-  return email.charAt(0).toUpperCase() || 'CM';
+  return (email || '').charAt(0).toUpperCase() || 'CM';
 }
 
-function normalizeProfile(profile) {
+function rowToProfile(row) {
+  let preferences = {};
+  try {
+    preferences = row.preferences ? JSON.parse(row.preferences) : {};
+  } catch {
+    preferences = {};
+  }
+
   const user = {
-    ...defaultProfile.user,
-    ...profile.user,
+    displayName: row.name || '',
+    username: preferences.username || '',
+    email: row.email || '',
+    bio: preferences.bio || '',
+    favoriteMovie: preferences.favoriteMovie || '',
+    favoriteGenres: preferences.favoriteGenres || [],
+    avatarInitials: getInitials(row.name, row.email),
   };
+
+  return { ...defaultProfile, user };
+}
+
+export async function getMyProfile(email) {
+  if (!isSupabaseConfigured || !email) {
+    return { ...defaultProfile, user: { ...defaultProfile.user, email: email || '' } };
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .maybeSingle();
+
+  if (error || !data) {
+    return { ...defaultProfile, user: { ...defaultProfile.user, email } };
+  }
+
+  return rowToProfile(data);
+}
+
+export async function updateMyProfile(email, profileUpdates) {
+  const preferences = JSON.stringify({
+    username: profileUpdates.username || '',
+    bio: profileUpdates.bio || '',
+    favoriteMovie: profileUpdates.favoriteMovie || '',
+    favoriteGenres: profileUpdates.favoriteGenres || [],
+  });
+
+  if (isSupabaseConfigured && email) {
+    await supabase
+      .from('users')
+      .update({ name: profileUpdates.displayName, preferences })
+      .eq('email', email);
+  }
 
   return {
     ...defaultProfile,
-    ...profile,
     user: {
-      ...user,
-      avatarInitials: getInitials(user.displayName, user.email),
+      ...profileUpdates,
+      email,
+      avatarInitials: getInitials(profileUpdates.displayName, email),
     },
   };
-}
-
-export async function getMyProfile() {
-  const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-
-  if (!savedProfile) {
-    return defaultProfile;
-  }
-
-  try {
-    return normalizeProfile(JSON.parse(savedProfile));
-  } catch {
-    localStorage.removeItem(PROFILE_STORAGE_KEY);
-    return defaultProfile;
-  }
-}
-
-export async function updateMyProfile(profileUpdates) {
-  const currentProfile = await getMyProfile();
-  const updatedProfile = normalizeProfile({
-    ...currentProfile,
-    user: {
-      ...currentProfile.user,
-      ...profileUpdates,
-    },
-  });
-
-  localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(updatedProfile));
-  return updatedProfile;
 }

@@ -76,6 +76,13 @@ function LoginPage({ onLogin }) {
           <button className="primary-action" type="submit">
             Log in
           </button>
+
+          <p className="login-panel__switch">
+            Don&apos;t have an account?{' '}
+            <button type="button" className="login-panel__link" onClick={() => navigate('/signup')}>
+              Sign up
+            </button>
+          </p>
         </form>
       </section>
     </main>
