@@ -26,7 +26,7 @@ def get_db():
 
 
 class RatingIn(BaseModel):
-    user_id: int
+    user_id: str
     movie_id: int
     rating: int
 
@@ -37,7 +37,7 @@ def health() -> dict:
 
 
 @app.get("/recommendations")
-def get_recommendations(user_id: int, limit: int = 20, db: Session = Depends(get_db)):
+def get_recommendations(user_id: str, limit: int = 20, db: Session = Depends(get_db)):
     user_vec = db.execute(
         text("SELECT embedding FROM user_embeddings WHERE user_id = :uid"),
         {"uid": user_id},

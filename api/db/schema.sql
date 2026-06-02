@@ -25,7 +25,8 @@ CREATE TABLE movies (
 
 CREATE TABLE ratings (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    -- user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL,
     movie_id INTEGER NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
     rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -33,7 +34,8 @@ CREATE TABLE ratings (
 );
 
 CREATE TABLE user_embeddings (
-    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    -- user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    user_id TEXT PRIMARY KEY,
     embedding vector(1536) NOT NULL
 );
 
