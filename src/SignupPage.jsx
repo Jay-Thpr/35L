@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SignupPage.css';
+import './AuthPage.css';
 
 function SignupPage({ onSignup }) {
   const navigate = useNavigate();
@@ -36,23 +36,23 @@ function SignupPage({ onSignup }) {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-hero" aria-label="Cinematch sign up">
-        <div className="login-copy">
-          <p className="eyebrow">Cinematch</p>
+    <main className="auth-page">
+      <section className="auth-hero" aria-label="Cinematch sign up">
+        <div className="auth-copy">
+          <p className="auth-eyebrow">Cinematch</p>
           <h1>Create your account</h1>
           <p>
             Start saving watched movies, ratings, and recommendations in one place.
           </p>
         </div>
 
-        <form className="login-panel" onSubmit={handleSubmit}>
-          <div className="login-panel__header">
+        <form className="auth-panel" onSubmit={handleSubmit}>
+          <div className="auth-panel__header">
             <h2>Sign up</h2>
             <p>Create an account to continue.</p>
           </div>
 
-          <label className="field">
+          <label className="auth-field">
             <span>Email</span>
             <input
               type="email"
@@ -63,7 +63,7 @@ function SignupPage({ onSignup }) {
             />
           </label>
 
-          <label className="field">
+          <label className="auth-field">
             <span>Password</span>
             <input
               type="password"
@@ -74,9 +74,9 @@ function SignupPage({ onSignup }) {
             />
           </label>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && <p className="auth-form-error">{error}</p>}
 
-          <button className="primary-action" type="submit">
+          <button className="auth-primary-action" type="submit">
             Sign up
           </button>
         </form>

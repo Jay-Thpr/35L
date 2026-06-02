@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import './AuthPage.css';
 
 function LoginPage({ onLogin }) {
   const navigate = useNavigate();
@@ -33,23 +33,23 @@ function LoginPage({ onLogin }) {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-hero" aria-label="Cinematch login">
-        <div className="login-copy">
-          <p className="eyebrow">Cinematch</p>
+    <main className="auth-page">
+      <section className="auth-hero" aria-label="Cinematch login">
+        <div className="auth-copy">
+          <p className="auth-eyebrow">Cinematch</p>
           <h1>Welcome back</h1>
           <p>
-            Sign in to keep your watched movies, ratings, and recommendations connected to your account.
+            Sign in to store movie ratings, track what you've watched, and get movie recommendations!
           </p>
         </div>
 
-        <form className="login-panel" onSubmit={handleSubmit}>
-          <div className="login-panel__header">
+        <form className="auth-panel" onSubmit={handleSubmit}>
+          <div className="auth-panel__header">
             <h2>Log in</h2>
-            <p>Use your account to continue.</p>
+            
           </div>
 
-          <label className="field">
+          <label className="auth-field">
             <span>Email</span>
             <input
               type="email"
@@ -60,7 +60,7 @@ function LoginPage({ onLogin }) {
             />
           </label>
 
-          <label className="field">
+          <label className="auth-field">
             <span>Password</span>
             <input
               type="password"
@@ -71,15 +71,15 @@ function LoginPage({ onLogin }) {
             />
           </label>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && <p className="auth-form-error">{error}</p>}
 
-          <button className="primary-action" type="submit">
+          <button className="auth-primary-action" type="submit">
             Log in
           </button>
 
-          <p className="login-panel__switch">
+          <p className="auth-panel__switch">
             Don&apos;t have an account?{' '}
-            <button type="button" className="login-panel__link" onClick={() => navigate('/signup')}>
+            <button type="button" className="auth-panel__link" onClick={() => navigate('/signup')}>
               Sign up
             </button>
           </p>
