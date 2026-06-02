@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { postRatingToBackend } from './recommendationsApi';
 import './ReviewModal.css';
 
 function ReviewModal({ movie, onClose, onReviewChange, userId, existingRating }) {
@@ -31,6 +32,7 @@ function ReviewModal({ movie, onClose, onReviewChange, userId, existingRating })
         setError(dbError.message);
         return;
       }
+      postRatingToBackend(userId, movie.id, rating);
     }
 
     onReviewChange({ rating });
