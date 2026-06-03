@@ -65,7 +65,7 @@ function App() {
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
 
-    await supabase.from('users').insert({ email });
+    await supabase.from('users').insert({ email, name: email.split('@')[0], preferences: '{}' });
   }
 
   async function handleLogout() {
