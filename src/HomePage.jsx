@@ -7,10 +7,10 @@ import './HomePage.css';
 
 function HomePage({ userId }) {
   const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(userId));
 
   useEffect(() => {
-    if (!userId) { setLoading(false); return; }
+    if (!userId) return;
     fetchRecommendations(userId).then((movies) => {
       setRecommendations(movies);
       setLoading(false);

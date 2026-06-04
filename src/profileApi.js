@@ -30,24 +30,31 @@ function getInitials(displayName, email) {
 }
 
 function rowToProfile(row) {
-  let preferences = {};
   try {
-    preferences = row.preferences ? JSON.parse(row.preferences) : {};
+    const preferences = row.preferences ? JSON.parse(row.preferences) : {};
+
+    const user = {
+      displayName: row.name || '',
+      username: preferences.username || '',
+      email: row.email || '',
+      bio: preferences.bio || '',
+      favoriteMovie: preferences.favoriteMovie || '',
+      favoriteGenres: preferences.favoriteGenres || [],
+      avatarInitials: getInitials(row.name, row.email),
+    };
+
+    return { ...defaultProfile, user };
   } catch {
-    preferences = {};
+    return {
+      ...defaultProfile,
+      user: {
+        ...defaultProfile.user,
+        displayName: row.name || '',
+        email: row.email || '',
+        avatarInitials: getInitials(row.name, row.email),
+      },
+    };
   }
-
-  const user = {
-    displayName: row.name || '',
-    username: preferences.username || '',
-    email: row.email || '',
-    bio: preferences.bio || '',
-    favoriteMovie: preferences.favoriteMovie || '',
-    favoriteGenres: preferences.favoriteGenres || [],
-    avatarInitials: getInitials(row.name, row.email),
-  };
-
-  return { ...defaultProfile, user };
 }
 
 export async function getMyProfile(email) {

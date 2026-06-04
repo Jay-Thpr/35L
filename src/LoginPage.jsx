@@ -71,7 +71,7 @@ function LoginPage({ onLogin }) {
             />
           </label>
 
-          {error && <p className="auth-form-error">{error}</p>}
+          {error && <p className="auth-form-error form-error">{error}</p>}
 
           <button className="auth-primary-action" type="submit">
             Log in

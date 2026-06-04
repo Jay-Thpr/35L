@@ -17,11 +17,10 @@ const demoUser = {
 
 function App() {
   const [currentUser, setCurrentUser] = useState(isSupabaseConfigured ? null : demoUser);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
-      setLoading(false);
       return undefined;
     }
 
