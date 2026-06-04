@@ -27,7 +27,7 @@ CREATE TABLE ratings (
     id SERIAL PRIMARY KEY,
     -- user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL,
-    movie_id INTEGER NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
+    movie_id INTEGER NOT NULL,
     rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (user_id, movie_id)
