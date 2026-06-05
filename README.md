@@ -2,6 +2,8 @@
 
 Cinematch is a movie discovery platform built with React and Vite. Users can sign in, look at featured movies, search for movies, rate/review movies, and edit their movie preferences! The frontend can run in a local demo mode, and the repo also includes a FastAPI recommendation backend that uses PostgreSQL and pgvector.
 
+https://docs.google.com/presentation/d/1pD3cWYuYf8obhzIO6KTXXOynTO4zxb5rZtxlQ59pPVU/edit?slide=id.p1#slide=id.p1
+
 ## Project Requirements
 
 | Requirement | Where It Is Implemented |
