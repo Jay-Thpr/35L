@@ -2,9 +2,11 @@
   min-height: 100vh;
   background: var(--color-bg);
   color: var(--color-text);
-  display: grid;
-  place-items: center;
-  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+  padding: 32px 0;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
@@ -32,11 +34,12 @@
 }
 
 .auth-hero {
-  width: min(960px, 100%);
+  width: min(960px, calc(100% - 64px));
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
   gap: 64px;
   align-items: center;
+  align-self: center;
   position: relative;
   z-index: 1;
 }
@@ -47,7 +50,7 @@
 
 .auth-eyebrow {
   font-family: var(--font-body);
-  color: rgba(229, 57, 61, 0.25);
+  color: rgba(98, 22, 185, 0.436);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 3px;
@@ -73,8 +76,43 @@
   font-weight: 300;
 }
 
+.auth-carousel {
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.auth-carousel::before {
+  content: '';
+  position: absolute;
+  inset: 12px 10% auto;
+  height: 72px;
+  background: rgba(212, 168, 67, 0.2);
+  filter: blur(46px);
+  pointer-events: none;
+}
+
+.auth-carousel__track {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  animation: authPosterDrift 46s linear infinite;
+}
+
+.auth-carousel__poster {
+  width: 92px;
+  aspect-ratio: 2 / 3;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+  object-fit: cover;
+}
+
 .auth-panel {
-  background: rgba(70, 22, 7, 0.8);
+  background: rgba(66, 7, 138, 0.406);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow:
@@ -195,12 +233,23 @@
   color: #f0ede3;
 }
 
+@keyframes authPosterDrift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (max-width: 860px) {
   .auth-page {
-    padding: 24px;
+    gap: 32px;
+    padding: 24px 0;
   }
 
   .auth-hero {
+    width: min(100% - 48px, 520px);
     grid-template-columns: 1fr;
     gap: 40px;
   }
@@ -215,5 +264,17 @@
 
   .auth-copy h1 {
     font-size: 40px;
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-carousel__poster {
+    width: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-carousel__track {
+    animation: none;
   }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthMovieCarousel from './AuthMovieCarousel';
 import './AuthPage.css';
 
 function SignupPage({ onSignup }) {
@@ -81,6 +82,7 @@ function SignupPage({ onSignup }) {
           </button>
         </form>
       </section>
+      <AuthMovieCarousel />
     </main>
   );
 }
