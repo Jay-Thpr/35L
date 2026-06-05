@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthMovieCarousel from './AuthMovieCarousel';
 import './AuthPage.css';
 
 function LoginPage({ onLogin }) {
@@ -85,6 +86,7 @@ function LoginPage({ onLogin }) {
           </p>
         </form>
       </section>
+      <AuthMovieCarousel />
     </main>
   );
 }
