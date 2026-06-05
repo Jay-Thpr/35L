@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { postRatingToBackend } from './recommendationsApi';
 import './ReviewModal.css';
 
+const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
 function ReviewModal({ movie, onClose, onReviewChange, userId, existingRating }) {
   const [rating, setRating] = useState(existingRating || 0);
   const [error, setError] = useState('');
+  const [overview, setOverview] = useState(movie.overview || '');
+
+  useEffect(() => {
+    if (overview || !TMDB_KEY || !movie.id) return;
+    fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDB_KEY}`)
+      .then((r) => r.json())
+      .then((data) => setOverview(data.overview || ''))
+      .catch(() => {});
+  }, [movie.id]);
 
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -75,6 +86,7 @@ function ReviewModal({ movie, onClose, onReviewChange, userId, existingRating })
 
           <div className="review-modal__content">
             <p className="review-modal__meta">{year}</p>
+            {overview && <p className="review-modal__overview">{overview}</p>}
             <label className="review-modal__field">
               <span>Your rating</span>
               <div className="review-modal__rating" aria-label="Choose a rating">
