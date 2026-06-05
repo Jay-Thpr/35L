@@ -69,7 +69,8 @@ export async function getMyProfile(email) {
     .maybeSingle();
 
   if (error || !data) {
-    return { ...defaultProfile, user: { ...defaultProfile.user, email } };
+    await supabase.from('users').insert({ email, name: email.split('@')[0], preferences: '{}' });
+    return { ...defaultProfile, user: { ...defaultProfile.user, email, displayName: email.split('@')[0] } };
   }
 
   return rowToProfile(data);
